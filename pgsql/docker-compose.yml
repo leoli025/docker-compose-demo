@@ -1,0 +1,24 @@
+version: '3'
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: postgres
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+      # postgres 密码
+      POSTGRES_PASSWORD: root
+      # 初始化数据库
+      POSTGRES_DB: my-db
+      # postgres 用户
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      # 数据挂载
+      - ./data/:/var/lib/postgresql/data/
+      # 配置挂载
+      - ./conf/:/etc/postgresql/
+      # 初始化挂载（可选操作）
+      - ./init/:/docker-entrypoint-initdb.d/
+    privileged: true

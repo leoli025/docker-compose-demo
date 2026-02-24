@@ -34,3 +34,6 @@ build/
 .vscode/
 /.mvn/
 /.idea/
+
+### Docker Compose Data Directories **/
+**/data/
