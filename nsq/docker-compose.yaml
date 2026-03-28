@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  nsqlookupd:
+    image: nsqio/nsq:v1.3.0
+    container_name: nsq-lookupd
+    ports:
+      - "4160:4160"  # TCP端口
+      - "4161:4161"  # HTTP端口
+    command: /nsqlookupd
+    restart: unless-stopped # 当容器被手动停止后 ，不会自动重启
+    networks:
+      - nsq-network
+
+  nsqd:
+    image: nsqio/nsq:v1.3.0
+    container_name: nsqd
+    ports:
+      - "4150:4150"  # TCP端口
+      - "4151:4151"  # HTTP端口
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
+    depends_on:
+      - nsqlookupd
+    restart: unless-stopped # 当容器被手动停止后 ，不会自动重启
+    networks:
+      - nsq-network
+
+  nsqadmin:
+    image: nsqio/nsq:v1.3.0
+    container_name: nsq-admin
+    ports:
+      - "4171:4171"  # 管理界面端口
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    depends_on:
+      - nsqlookupd
+    restart: unless-stopped # 当容器被手动停止后 ，不会自动重启
+    networks:
+      - nsq-network
+
+networks:
+  nsq-network:
+    driver: bridge
